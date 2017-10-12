@@ -1,0 +1,42 @@
+/*最高响应比优先算法：
+ * 方法：
+ * 1.getIndex：一个继承的方法，传入两个参数，当前的JCB，和现在的时间，获得按照最高响应比排序之后这个JCB
+ *   应该插入的位置。
+ * 2.setMember：一个继承的方法，设置当前的等待队列。
+ */
+public class responseRatio extends AbstractSort {
+	public int getIndex(JCB tem,TimeOfJCB now) {
+		float ResponseOne = tem.getResponseRatio(now);
+		float ResponseTwo;
+		float ResponseThree;
+		int index = 0;
+		
+		while(true) {
+			if(member.size()==0) {
+				return 0;
+				}
+			else {
+				ResponseTwo = member.get(index).getResponseRatio(now);
+				if(ResponseTwo<ResponseOne) {
+					if(index+1==member.size()) {
+						return  index+1;
+					}
+					else {
+						ResponseThree = member.get(index+1).getResponseRatio(now);
+						if(ResponseThree>ResponseOne) {
+							return index+1;
+						}
+						else
+							index++;
+					}
+				}
+				else {
+					return index;
+				}
+			}
+		}
+	}
+	public void setMember(queue tem) {
+		member = tem.getWaitingQueue();
+	}
+}

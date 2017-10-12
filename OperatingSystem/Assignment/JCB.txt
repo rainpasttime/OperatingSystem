@@ -1,0 +1,129 @@
+/*
+ * JCB类
+ * 成员：
+ * 1.作业名
+ * 2.作业状态
+ * 3.作业进入输入井的时间
+ * 4.作业估计运行的时间--分钟时单位
+ * 5.作业完成时间
+ * 方法：
+ * 1.构造方法
+ * 2.getStatus：获得目前的状态
+ * 3.getInTime：获得进入输入井的时间
+ * 4.getResponseRatio：获得目前的响应比
+ * 5.display:展示当前JCB的内容
+ * 6.setfinishedTime:传入一个当前时间，然后计算出完成时间，并把完成时间写入JCB中
+ * 7.getResponseRatio:传入一个当前时间的参数，获得当前JCB的响应比
+ * 
+ * TimeOfJCB类：
+ * 成员：
+ * 1.Hour:表示时间的小时
+ * 2.Minute:表示时间的分钟
+ * 3.compare:跟另外一个TimeOfJCB类的比较方法，大于返回1，小于返回-1，等于返回0。
+ * 4change:传入一个JCB类型的参数，表示运行完这个作业之后的现在时间。
+ */
+public class JCB {
+	private String name;
+	private String status;
+	private TimeOfJCB inTime;
+	private int runningTime;
+	private TimeOfJCB startTime;
+	private TimeOfJCB finishedTime;
+	public JCB(String na,String sta,TimeOfJCB in,int ru) {
+		name = na;
+		status = sta;
+		inTime = in;
+		runningTime = ru;
+		
+	}
+	public float getResponseRatio(TimeOfJCB now) {
+		float response;
+		int nowHour = now.getHour();
+		int nowMinute = now.getMinute();
+		int MyInHour = inTime.getHour();
+		int MyInMinute = inTime.getMinute();
+		int MyRunTime = runningTime;
+		float getWaitingTime;
+		
+		getWaitingTime = (nowHour-MyInHour)*60+(nowMinute-MyInMinute);  //等待时间--分钟
+		getWaitingTime = getWaitingTime/MyRunTime;                     //处理时间--分钟
+		response = getWaitingTime+1;                                   //响应比
+
+		return response;
+	}
+	public void setStatus(String a) {
+		status = a;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public TimeOfJCB getInTime() {
+		return inTime;
+	}
+	public int getRunningTime() {
+		return runningTime;
+	}
+	public String getName() {
+		return name;
+	}
+	public TimeOfJCB getFinishedTime() {
+		return finishedTime;
+	}
+	public void setStartTime(TimeOfJCB n) {
+		startTime = new TimeOfJCB();
+		startTime = n;
+	}
+	public TimeOfJCB getStartTime(TimeOfJCB n) {
+		return startTime;
+	}
+	public void display() {
+		System.out.print(name+"	"+status+"	"+inTime.getHour()+":"+inTime.getMinute());
+		System.out.print("	"+runningTime+"		"+startTime.getHour()+":"+startTime.getMinute());
+		System.out.println("		"+finishedTime.getHour()+":"+finishedTime.getMinute());
+	}
+	public void setfinishedTime(TimeOfJCB now) {
+		finishedTime = new TimeOfJCB();
+		int X1 = now.getHour();
+		int Y1 = now.getMinute();
+		int ruHour = runningTime/60;
+		int ruMinute = runningTime%60;
+		X1 +=ruHour;
+		Y1 +=ruMinute;
+		if(Y1>=60) {
+			Y1-=60;
+			X1+=1;
+		}
+		finishedTime.setTime(X1, Y1);
+	}
+	
+
+}
+
+class TimeOfJCB{
+	private int hour;
+	private int minute;
+	public void setTime(int x,int y) {
+		hour = x;
+		minute = y;
+	}
+	public int getHour(){
+		return hour;
+	}
+	public int getMinute() {
+		return minute;
+	}
+	public int compare(TimeOfJCB tem) {
+		if(tem.getHour()<hour||(tem.getHour()==hour&&tem.getMinute()<minute))
+			return 1;
+		else if(tem.getHour()>hour||(tem.getHour()==hour&&tem.getMinute()>minute))
+			return -1;
+		else 
+			return 0;
+	}
+	public void change(JCB one) {
+		TimeOfJCB X = one.getFinishedTime();
+		hour = X.getHour();
+		minute = X.getMinute();
+	}
+}
+

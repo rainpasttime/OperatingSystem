@@ -1,0 +1,45 @@
+/*
+ * 先来先服务算法
+ * 方法：
+ * 1.getIndex：一个继承的方法，按照调度顺序，获得应该插入的位置，并把这个位置返回。
+ * 2.setMember：一个继承的方法，设置当前的等待队列。
+ */
+public class ComeFirst extends AbstractSort {
+
+	/*
+	 * (non-Javadoc)
+	 * @see AbstractSort#getIndex(JCB)
+	 * 排序算法，每加入一个作业，就先按照它进入输入井的时间得到相应的下标
+	 * 然后把它插入相应的位置。
+	 */
+	public int getIndex(JCB tem,TimeOfJCB now) {
+		TimeOfJCB TimeOne;
+		TimeOfJCB TimeTwo;
+		TimeOfJCB TimeThree;
+		int index = 0;
+		TimeOne = tem.getInTime();
+		while(true) {
+			if(member.size()==0)                                     //队列中没有节点
+				return 0;
+			else {
+				TimeTwo = member.get(index).getInTime();
+				if(TimeTwo.compare(TimeOne)<0) {
+					if(index+1==member.size())                      //队列中最后一个节点小于当前节点
+						return index+1;
+					else {                                          
+						TimeThree = member.get(index+1).getInTime();   
+						if(TimeThree.compare(TimeOne)>0)               //下一个节点大于当前节点
+							return index+1;
+						else index++;                                  //否则继续比较
+					}
+				}
+				else {
+					return index;
+				}
+			}
+		}
+	}
+	public void setMember(queue Queue) {
+		member = Queue.getWaitingQueue();
+	}
+}

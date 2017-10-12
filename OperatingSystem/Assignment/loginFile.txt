@@ -1,0 +1,56 @@
+/*
+ * 一个类，用来把文件中的作业说明书的内容加载到程序中。
+ * 方法：
+ * 1.Login：从文件中读取作业说明书的内容，一行一行的从文件中读取，然后利用正则式分解成一个个单词。
+ *         分别代表了作业说明书的不同的内容。然后创建成一个个JCB类型的变量，加入到queue里面的
+ *         OutOfInputWell的链表里面。
+ */
+import java.io.*;
+public class loginFile {
+	private queue queueForJCB;
+	public loginFile(queue tem) {
+		queueForJCB = tem;
+	}
+	
+	public void Login(File file) {
+		try{
+			BufferedReader inTwo = new BufferedReader(new FileReader(file));
+			String s = null;
+			while((s = inTwo.readLine())!=null) {
+				String words[] = s.split("\\s+");
+				String name = words[0];
+				String status = words[1];
+				String SinTime = words[2];
+				String SrunningTime = words[3];
+				int runningTime = Integer.parseInt(SrunningTime);
+				String tem[] = SinTime.split("\\p{Punct}+");
+				String SX = tem[0];
+				String SY = tem[1];
+				int X = Integer.parseInt(SX);
+				int Y = Integer.parseInt(SY);
+				TimeOfJCB inTime = new TimeOfJCB();
+				inTime.setTime(X, Y);
+				JCB one = new JCB(name,status,inTime,runningTime);
+				queueForJCB.addOutOfInputWell(one);
+			}
+			inTwo.close();	
+		}
+		catch(IOException e) {
+			System.out.println("Fail to read file!");
+		}
+	}
+	public void display(File file){
+		try{
+			BufferedReader inTwo = new BufferedReader(new FileReader(file));
+			String s = null;
+			while((s = inTwo.readLine())!=null) {
+				System.out.println(s);
+			}
+			inTwo.close();
+		}
+		catch(IOException e) {
+			System.out.println("Fail to read file!");
+		}
+	}
+
+}

@@ -1,0 +1,67 @@
+/*
+ * 主函数，主要模拟调度CPU的过程
+ */
+import java.io.File;
+public class AllocateCPU {
+	static 	queue Queue = new queue();
+	static loginFile login = new loginFile(Queue);
+	
+	public static void main(String args[]) {
+		
+		//从文件中读入作业说明书的内容
+		File file = new File("E:\\操作系统\\Java实验","Assignment.txt");
+		//File file = new File(".","Assignment.txt");
+		System.out.println("Name		status	inTime	runningTime");
+		login.Login(file);
+		login.display(file);
+		
+		System.out.println("=================================先来先服务算法=============================");
+		System.out.println("Name		status		inTime	runningTime	startTime	finishedTime");
+		AllocateCPU.allocate(new ComeFirst());
+		
+		login.Login(file);
+		System.out.println("=================================短作业优先算法=============================");
+		System.out.println("Name		status		inTime	runningTime	startTime	finishedTime");
+		AllocateCPU.allocate(new ShortAssignment());
+		
+		login.Login(file);
+		System.out.println("================================最高响应比算法=============================");
+		System.out.println("Name		status		inTime	runningTime	startTime	finishedTime");
+		AllocateCPU.allocate(new responseRatio());
+	}
+	
+	public static void allocate(AbstractSort allocation) {
+		TimeOfJCB now = new TimeOfJCB();
+		
+		Queue.setSort(allocation);
+		allocation.setMember(Queue);
+		now.setTime(8, 0);
+		while(true) {
+			//当还有作业没有进入输入井，根据当前时间，把输入井外的作业加入到输入井中。
+			 if(Queue.getOutOfInputWell().size()!=0) {
+			   	Queue.addWaiting(now);
+		    }
+		    //当输入井外的队列空了，并且等待队列也空了，则退出循环。
+		    if(Queue.getWaitingQueue().size()==0 && Queue.getOutOfInputWell().size()==0){
+			   	break;
+		   	}
+		    JCB one;
+			if(allocation instanceof responseRatio) {
+			    Queue.sort(now);
+				one = Queue.getWaitingQueue().getLast();
+			    Queue.getWaitingQueue().removeLast();
+			}
+			else {
+				one = Queue.getWaitingQueue().get(0);
+			    Queue.getWaitingQueue().remove(0);
+			}
+		    one.setfinishedTime(now);
+		    one.setStartTime(now);
+		    one.display();
+		    now.change(one);
+			}
+	}
+	
+}
+
+

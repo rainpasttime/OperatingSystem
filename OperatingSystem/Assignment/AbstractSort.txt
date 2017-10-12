@@ -1,0 +1,15 @@
+/*
+ * 一个抽象的排序类
+ * 成员：
+ * 1.一个链表：用来表示当前的等待队列。
+ * 方法：
+ * 1.一个抽象的方法，往链表里面按照调度的顺序添加节点。
+ * 2.一个抽象的方法，设置等待队列。
+ */
+import java.util.LinkedList;
+public abstract class AbstractSort {
+	public LinkedList<JCB> member;
+	public abstract int getIndex(JCB tem,TimeOfJCB now);
+	public abstract void setMember(queue Queue);
+	
+}

@@ -1,0 +1,94 @@
+/*
+ * 一个队列组织
+ * 成员：
+ * 1.调度的算法
+ * 2.等待的作业
+ * 3.还没有进入输入井的作业
+ * 方法：
+ * 1.sortOutOfInputWell:当文件中的作业说明书都进入程序之后，先对作业按时间排序，
+ *   用来后面一个个按照时间加入到输入井中。
+ *   
+ * 2.addWaiting:传入一个当前时间的参数。把OutOfInputWell链表里面的第一个作业的输入时间
+ *   跟当前时间相比，如果，小于当前时间，就把这个作业加入WaitingQueue，在加入WaitingQueue
+ *   时根据当前设置的算法，把这个作业加入到WaitingQueue的恰当位置。重复上面的过程直到链表中第一
+ *   个作业的输入时间大于当前时间。
+ *   
+ * 3.setSort：传入一个抽象调度算法的参数。把这个调度算法设为现在使用的调度算法。
+ * 4.sortByRatio:用来在每运行完一个作业之后，按照当前时间计算大家目前的响应比，并调整等待队列。
+ * 注：LinkedList 的下标是从0开始的
+ */
+import java.util.*;
+public class queue {
+	private AbstractSort Sort;
+	private LinkedList<JCB> waitingQueue;
+	private LinkedList<JCB> outOfInputWell;
+	
+	public void sortOutOfInputWell(){
+		int size = outOfInputWell.size();
+		for(int i = 0;i<size;i++) {
+			int index = i;
+			JCB one = outOfInputWell.get(i);
+			TimeOfJCB tem1 = one.getInTime();
+			for(int j=i+1;j<size;j++) {
+				JCB two = outOfInputWell.get(j);
+				TimeOfJCB tem2 = two.getInTime();
+				if(tem2.compare(tem1)<0){
+					index = j;
+					tem1 = outOfInputWell.get(index).getInTime();
+				}
+			}
+			if(index!=i) {
+				JCB element= outOfInputWell.get(index);
+				outOfInputWell.remove(index);
+				outOfInputWell.add(i, element);
+			}
+		}
+	}
+	public void addWaiting(TimeOfJCB now) {
+		JCB tem=outOfInputWell.get(0);
+		TimeOfJCB time1 = tem.getInTime();
+		
+		while(outOfInputWell.size()!=0&&time1.compare(now)<=0) {
+			tem.setStatus("Finished");
+			int index = Sort.getIndex(tem,now);
+		    waitingQueue.add(index,tem);
+		    outOfInputWell.remove(0);
+		    if(outOfInputWell.size()!=0) {
+		    	tem=outOfInputWell.get(0);
+			    time1 = tem.getInTime();
+			}
+		    else
+		    	break;
+		}
+	}
+	public void setSort(AbstractSort tem) {
+		Sort = tem;
+	}
+	public void sort(TimeOfJCB now) {
+		for(int i = 0;i<waitingQueue.size();i++) {
+			JCB one = waitingQueue.get(i);
+			if(Sort.getIndex(one, now)==i)
+				continue;
+			for(int j=i+1;j<waitingQueue.size();j++) {
+				JCB two = waitingQueue.get(j);
+				if(Sort.getIndex(two, now)==i) {
+					waitingQueue.remove(j);
+					waitingQueue.add(i, two);
+				}
+			}
+		}	
+	}
+	public LinkedList<JCB> getWaitingQueue(){
+		return waitingQueue;
+	}
+	public LinkedList<JCB> getOutOfInputWell(){
+		return outOfInputWell;
+	}
+	public void addOutOfInputWell(JCB tem) {
+		outOfInputWell.add(tem);
+	}
+	public queue() {
+		waitingQueue = new LinkedList<JCB>();
+		outOfInputWell = new LinkedList<JCB>();
+	}
+}
