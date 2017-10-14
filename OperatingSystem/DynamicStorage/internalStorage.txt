@@ -21,16 +21,14 @@ import java.util.LinkedList;
 import java.util.Scanner;
 public class internalStorage {
 	private static LinkedList<Storage> EmptyLine;
-	private static LinkedList<Storage> WaitingLineOne;
-	private static LinkedList<Storage> WaitingLineTwo;
-	private static LinkedList<Storage> WaitingLineThree;
+        private static LinkedList<Strong>[]  WaitingLine = new LinkedList<Strong>[3];
 	private static LinkedList<Storage> ReadyLine;
 	
 	public static void Initialize() {
 		EmptyLine = new LinkedList<Storage>();
-		WaitingLineOne = new LinkedList<Storage>();
-		WaitingLineTwo = new LinkedList<Storage>();
-		WaitingLineThree = new LinkedList<Storage>();
+		WaitingLine[0] = new LinkedList<Storage>();
+		WaitingLine[1] = new LinkedList<Storage>();
+		WaitingLine[2] = new LinkedList<Storage>();
 		ReadyLine = new LinkedList<Storage>();
 		for(int i=0;i<20;i++) {
 			Storage tem = new Storage();
@@ -40,35 +38,20 @@ public class internalStorage {
 	public static void display() {
 		System.out.println("===========================================");
 		int i = EmptyLine.size();
+                int j = 0;
 		System.out.println("The number of empty storage is "+i);
 		System.out.println("");
 		
-		i = WaitingLineOne.size();
-		System.out.println("The number of waiting line one is "+i);
-		while(i>0) {
-			Storage tem = WaitingLineOne.get(i-1);
-			tem.display();
-			i--;
-		}
-		System.out.println("");
-		
-		i = WaitingLineTwo.size();
-		System.out.println("The number of waiting line two is "+i);
-		while(i>0) {
-			Storage tem = WaitingLineTwo.get(i-1);
-			tem.display();
-			i--;
-		}
-		System.out.println("");
-		
-		i = WaitingLineThree.size();
-		System.out.println("The number of waiting line three is "+i);
-		while(i>0) {
-			Storage tem = WaitingLineThree.get(i-1);
-			tem.display();
-			i--;
-		}
-		System.out.println("");
+                while(j++<3){
+                        i = WaitingLine[j].size();
+		        System.out.println("The number of waiting line "+j+"is "+i);
+		        while(i>0) {
+				Storage tem = WaitingLineOne.get(i-1);
+			        tem.display();
+			        i--;
+		        }
+		        System.out.println("");
+                }
 		
 		i = ReadyLine.size();
 		System.out.println("The number of ready line is "+i);
@@ -98,16 +81,16 @@ public class internalStorage {
 				System.out.println("Input the ID of PCB:");
 				try {
 					j = read.nextInt();
-				    judge = Unique(j);
-				    if(!judge){
-				    	System.out.println("Fail!The ID of PCB is no unique!Input again!");
-					    continue;
+				        judge = Unique(j);
+				        if(!judge){
+				    	     System.out.println("Fail!The ID of PCB is no unique!Input again!");
+					continue;
+				        }
 				    }
-				}
-				catch(Exception e) {
+			         catch(Exception e) {
 					System.out.println("Please input number!Input again");
 					continue;
-				}
+				 }
 				
 				System.out.println("Input the running time of PCB:");
 				try {
@@ -117,7 +100,7 @@ public class internalStorage {
 					System.out.println("Please input number!Input again");
 					continue;
 				}
-			    flag = 0;
+			        flag = 0;
 				System.out.println("Input the name of PCB");
 				String na = read.next();
 				tem.FillInPCB(j, na,ti);
@@ -126,39 +109,18 @@ public class internalStorage {
 		}
 	}
 	public static boolean Unique(int i) {
-		int number = WaitingLineOne.size();
-		if(number!=0) {
-			Iterator<Storage> iter = WaitingLineOne.iterator();
-			while(iter.hasNext()) {
-				Storage temone = iter.next();
-				PCB temtwo  = temone.getContent();
-			    int j = temtwo.getID();
-			    if(i==j)
-			    	return false;
-			}
-		}
-		
-		number = WaitingLineTwo.size();
-		if(number!=0) {
-			Iterator<Storage> iter = WaitingLineTwo.iterator();
-			while(iter.hasNext()) {
-				Storage temone = iter.next();
-				PCB temtwo  = temone.getContent();
-			    int j = temtwo.getID();
-			    if(i==j)
-			    	return false;
-			}
-		}
-		
-		number = WaitingLineThree.size();
-		if(number!=0) {
-			Iterator<Storage> iter = WaitingLineThree.iterator();
-			while(iter.hasNext()) {
-				Storage temone = iter.next();
-				PCB temtwo  = temone.getContent();
-			    int j = temtwo.getID();
-			    if(i==j)
-			    	return false;
+                int row = 0;
+                while(row++<3){
+			int number = WaitingLine[row].size();
+			if(number!=0) {
+				Iterator<Storage> iter = WaitingLine[row].iterator();
+				while(iter.hasNext()) {
+					Storage temone = iter.next();
+					PCB temtwo  = temone.getContent();
+			 	        int j = temtwo.getID();
+			   	        if(i==j)
+			    		return false;
+				}
 			}
 		}
 		
@@ -182,84 +144,34 @@ public class internalStorage {
 		int tem;
 		int flag = 1;
 		int i=0;
-		switch(reason) {
-		case 0:
-			temone = ReadyLine.get(i);
-			temtwo = temone.getContent();
-			tem = temtwo.getID();
-			while(flag==1) {
-				if(tem==IDofPCB) {
-					flag = 0;
-					ReadyLine.remove(i);
-					temone.changeStatus("Waiting");
+
+		temone = ReadyLine.get(i);
+		temtwo = temone.getContent();
+		tem = temtwo.getID();
+		while(flag==1) {
+			if(tem==IDofPCB) {
+				flag = 0;
+				ReadyLine.remove(i);
+				temone.changeStatus("Waiting");
+                                if(reason==0)
 					temone.addReason("Waiting for Input");
-					WaitingLineOne.add(temone);
-					return true;
-				}
-				else {
-					if(i<ReadyLine.size()-1) {
-						i++;
-					    temone = ReadyLine.get(i);
-					    temtwo = temone.getContent();
-					    tem = temtwo.getID();
-					}
-					else
-						break;
-				}
-			}
-			break;
-		case 1:
-			temone = ReadyLine.get(i);
-			temtwo = temone.getContent();
-			tem = temtwo.getID();
-			while(flag==1) {
-				if(tem==IDofPCB) {
-					flag = 0;
-					ReadyLine.remove(i);
-					temone.changeStatus("Waiting");
+                                else if(reason==1)
 					temone.addReason("Waiting for printer");
-					WaitingLineTwo.add(temone);
-					return true;
-				}
-				else {
-					if(i<ReadyLine.size()-1) {
-						i++;
-					    temone = ReadyLine.get(i);
-					    temtwo = temone.getContent();
-					    tem = temtwo.getID();
-					}
-					else
-						break;
-				}
-			}
-			break;
-		case 2:
-			if(ReadyLine.isEmpty())
-				return false;
-			temone = ReadyLine.get(i);
-			temtwo = temone.getContent();
-			tem = temtwo.getID();
-			while(flag==1) {
-				if(tem==IDofPCB) {
-					flag = 0;
-					ReadyLine.remove(i);
-					temone.changeStatus("Waiting");
+                                else if(reason==0)
 					temone.addReason("Waiting for another process");
-					WaitingLineThree.add(temone);
-					return true;
-				}
-				else {
-					if(i<ReadyLine.size()-1) {
-						i++;
-					    temone = ReadyLine.get(i);
-					    temtwo = temone.getContent();
-					    tem = temtwo.getID();
-					}
-					else
-						break;
-				}
+				WaitingLine[reason].add(temone);
+				return true;
 			}
-			break;
+			else {
+				if(i<ReadyLine.size()-1) {
+					i++;
+					temone = ReadyLine.get(i);
+					temtwo = temone.getContent();
+					tem = temtwo.getID();
+                                }
+				else
+				        break;
+			}
 		}
 		return false;
 	}
