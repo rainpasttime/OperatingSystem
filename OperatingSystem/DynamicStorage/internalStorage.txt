@@ -15,6 +15,8 @@
  *         4.Unique:传入一个int型参数，代表进程号，方法作用是判断这个进程号是否是唯一的。唯一的返回true,否则返回false。
  *         5.ChangeToWait:把进程状态从运行态或者就绪态转为等待态。传入一个int型参数来表示等待的原因，根据不同的等待原因把进程放进不同的等待队列里面去。
  *         6.Run:运行一个进程。如果一个进程已经运行完成，就回收那一块内存，把这个内存加入EmptyLine。
+ *         7. IsEmpty:判断内存中是否所有内存都是空的。
+ *         8.RevokeWait:传入两个参数，分别是等待的原因和进程号。如果指定原因的等待队列中有相应的进程号，就把哪个进程唤醒。否则报错。
  */
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -189,14 +191,18 @@ public class internalStorage {
 		    	ReadyLine.addLast(one);
 		    }
 		}
-}
+        }
 	public static boolean IsEmpty() {
 		int i = ReadyLine.size();
-		int j = WaitingLineOne.size();
-		int t = WaitingLineTwo.size();
-		int w = WaitingLineThree.size();
-		if(i==0 && j==0 && t==0 && w==0)
-			return true;
+		if(i==0){
+                         int j = 0;
+                         while(j++<3){
+                                   i = WaitingLine[j].size();
+                                   if(i!=0)
+                                          return false;
+                         }
+                         return true;
+                }
 		else
 			return false;
 	}
@@ -206,100 +212,41 @@ public class internalStorage {
 		PCB temtwo;
 		int tem;
 		int flag = 1;
-		switch(reason) {
-		case 0:
-			temone = WaitingLineOne.get(i);
-			temtwo = temone.getContent();
-			tem = temtwo.getID();
-			while(flag==1) {
-				if(tem==IDofPCB) {
-					flag = 0;
-					WaitingLineOne.remove(i);
-					temone.changeStatus("Ready");
-					ReadyLine.add(temone);
-					return true;
-				}
-				else {
-					if(i<WaitingLineOne.size()-1) {
-						i++;
-					    temone =WaitingLineOne.get(i);
-					    temtwo = temone.getContent();
-					    tem = temtwo.getID();
-					}
-					else
-						break;
-				}
+  
+            	temone = WaitingLine[reason].get(i);
+		temtwo = temone.getContent();
+		tem = temtwo.getID();
+		while(flag==1) {
+			if(tem==IDofPCB) {
+				flag = 0;
+				WaitingLine[reason].remove(i);
+				temone.changeStatus("Ready");
+				ReadyLine.add(temone);
+				return true;
 			}
-			break;
-		case 1:
-			temone = WaitingLineTwo.get(i);
-			temtwo = temone.getContent();
-			tem = temtwo.getID();
-			while(flag==1) {
-				if(tem==IDofPCB) {
-					flag = 0;
-					WaitingLineTwo.remove(i);
-					temone.changeStatus("Ready");
-					ReadyLine.add(temone);
-					return true;
+			else {
+				if(i<WaitingLine[reason].size()-1) {
+					i++;
+					temone =WaitingLine[reason].get(i);
+					temtwo = temone.getContent();
+					tem = temtwo.getID();
 				}
-				else {
-					if(i<WaitingLineTwo.size()-1) {
-						i++;
-					    temone =WaitingLineTwo.get(i);
-					    temtwo = temone.getContent();
-					    tem = temtwo.getID();
-					}
-					else
-						break;
-				}
+				else
+				        break;
 			}
-			break;
-		case 2:
-			temone = WaitingLineThree.get(i);
-			temtwo = temone.getContent();
-			tem = temtwo.getID();
-			while(flag==1) {
-				if(tem==IDofPCB) {
-					flag = 0;
-					WaitingLineThree.remove(i);
-					temone.changeStatus("Ready");
-					ReadyLine.add(temone);
-					return true;
-				}
-				else {
-					if(i<WaitingLineThree.size()-1) {
-						i++;
-					    temone =WaitingLineThree.get(i);
-					    temtwo = temone.getContent();
-					    tem = temtwo.getID();
-					}
-					else
-						break;
-				}
-			}
-			break;
 		}
 		return false;
 	}
 	public static void Revoke() {
-		int i = WaitingLineOne.size();
-		int j = WaitingLineTwo.size();
-		int t = WaitingLineThree.size();
-		if(i!=0) {
-			Storage one = WaitingLineOne.removeFirst();
-			one.changeStatus("Ready");
-			ReadyLine.add(one);
-		}
-		if(j!=0) {
-			Storage one = WaitingLineTwo.removeFirst();
-			one.changeStatus("Ready");
-			ReadyLine.add(one);
-		}
-		if(t!=0) {
-			Storage one = WaitingLineThree.removeFirst();
-			one.changeStatus("Ready");
-			ReadyLine.add(one);
-		}
+		int i = 0;
+                int j= 0;
+		while(i++<3) {
+                        j = WaitingLine[i].size();
+                        if(j>0){
+			      Storage one = WaitingLine[i].removeFirst();
+			      one.changeStatus("Ready");
+			      ReadyLine.add(one);
+		        }
+                }
 	}
 }

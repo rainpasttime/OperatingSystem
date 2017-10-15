@@ -19,6 +19,8 @@ public class Storage {
 	}
 	public int Run(int count) {
 		int i = content.run(count);
+                if(i==0)
+                       flag=0;
 		return  i;
 	}
 	public void Recycle() {
