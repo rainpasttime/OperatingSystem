@@ -7,6 +7,7 @@
  *              1.FillInPCB：当这个内存块是空的，把内存块取出来使用
  *              2.Run:运行这一块内存保存的进程
  *              3.Recycle:回收这一个内存，在进程运行完成之后被调用
+ *              4.getFlag:获取这个内存的状态，为1表示满，0表示空
  *              
  */
 public class Storage {
@@ -19,8 +20,6 @@ public class Storage {
 	}
 	public int Run(int count) {
 		int i = content.run(count);
-                if(i==0)
-                       flag=0;
 		return  i;
 	}
 	public void Recycle() {

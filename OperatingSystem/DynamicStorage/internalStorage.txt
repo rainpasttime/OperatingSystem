@@ -3,10 +3,8 @@
  * 假定整个内存中只有20个单元的内存块。则空内存，阻塞队列1，阻塞队列2，阻塞队列3，就绪队列所有的Storage
  * 加起来的数目是20.
  *     成员：1.空内存
- *         2.阻塞队列1
- *         3.阻塞队列2
- *         4.阻塞队列3
- *         5.就绪队列
+ *         2.阻塞队列数组
+ *         3.就绪队列
  *     方法：
  *         1.Initialize:初始化内存的方法,初始化之后，空内存块有20个Storage，阻塞队列1，
  *                      阻塞队列2，阻塞队列3，就绪队列都是空。
@@ -17,6 +15,7 @@
  *         6.Run:运行一个进程。如果一个进程已经运行完成，就回收那一块内存，把这个内存加入EmptyLine。
  *         7. IsEmpty:判断内存中是否所有内存都是空的。
  *         8.RevokeWait:传入两个参数，分别是等待的原因和进程号。如果指定原因的等待队列中有相应的进程号，就把哪个进程唤醒。否则报错。
+ *         9.Revoke:当用户退出进程之后，如果内存的等待队列还有等待进程，就系统就自动唤醒等待进程的第一个进程，加入就绪队列。
  */
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -44,14 +43,15 @@ public class internalStorage {
 		System.out.println("The number of empty storage is "+i);
 		System.out.println("");
 		
-                while(j++<3){
+                while(j<3){
                         i = WaitingLine[j].size();
 		        System.out.println("The number of waiting line "+j+"is "+i);
 		        while(i>0) {
-				Storage tem = WaitingLineOne.get(i-1);
+				Storage tem = WaitingLine[j].get(i-1);
 			        tem.display();
 			        i--;
 		        }
+                        j++;
 		        System.out.println("");
                 }
 		
@@ -159,7 +159,7 @@ public class internalStorage {
 					temone.addReason("Waiting for Input");
                                 else if(reason==1)
 					temone.addReason("Waiting for printer");
-                                else if(reason==0)
+                                else if(reason==2)
 					temone.addReason("Waiting for another process");
 				WaitingLine[reason].add(temone);
 				return true;
@@ -179,15 +179,13 @@ public class internalStorage {
 	}
 	public static void Run(int count) {
 		if(ReadyLine.size()!=0) {
-			Storage tem = ReadyLine.getFirst();
-			int i = tem.Run(count);
+			Storage one = ReadyLine.removeFirst();
+			int i = one.Run(count);
 		    if(i==0) {
-		    	Storage one = ReadyLine.removeFirst();
 			    one.Recycle();
 			    EmptyLine.add(one);
 		    }
 		    else {
-		    	Storage one = ReadyLine.removeFirst();
 		    	ReadyLine.addLast(one);
 		    }
 		}
@@ -196,8 +194,9 @@ public class internalStorage {
 		int i = ReadyLine.size();
 		if(i==0){
                          int j = 0;
-                         while(j++<3){
+                         while(j<3){
                                    i = WaitingLine[j].size();
+                                   j++;
                                    if(i!=0)
                                           return false;
                          }
@@ -240,13 +239,14 @@ public class internalStorage {
 	public static void Revoke() {
 		int i = 0;
                 int j= 0;
-		while(i++<3) {
+		while(i<3) {
                         j = WaitingLine[i].size();
                         if(j>0){
 			      Storage one = WaitingLine[i].removeFirst();
 			      one.changeStatus("Ready");
 			      ReadyLine.add(one);
 		        }
+                        i++;
                 }
 	}
 }

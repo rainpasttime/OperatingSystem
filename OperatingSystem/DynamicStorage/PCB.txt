@@ -9,6 +9,8 @@
  *     方法：
  *        1.display:展示PCB的内容
  *        2.run:运行这个进程
+ *        3.changeStatus:改变一个PCB的状态
+ *        4.addReason:当把一个进程变成阻塞状态时需要给出等待原因
  */
 public class PCB {
 	private int ID;
@@ -27,7 +29,7 @@ public class PCB {
 	}
 	public int run(int count) {
 		System.out.println("===========================================");
-		System.out.println("======Run="+count+"===============================");
+		System.out.println("======Run="+ count +"===============================");
 		Time-=1;
 		if(Time==0) {
 			status = "Finished";

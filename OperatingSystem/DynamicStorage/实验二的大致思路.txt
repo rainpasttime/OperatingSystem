@@ -1,0 +1,63 @@
+/*
+根据三状态模型的进程，创建，等待，就绪。
+就绪到运行的过程由internalStorage类的Run方法完成。（运行时总是运行就绪队列的第一个进程）
+运行到就绪的过程由internalStorage类的Run方法完成。（时间片到了的进程加入到就绪队列的队尾）
+等待到就绪的过程由internalStorage类的RevokeWait方法和Revoke方法完成。
+就绪到等待的过程由internalStorage类的ChangeToWait方法完成。
+
+*/
+
+
+
+
+1.类internalStorage:
+                    成员：<LinkedList>Storage EmptyStorage     //空的内存
+                          LinkedList<Strong>[]  WaitingLine   //阻塞队列数组
+                          LinkedList<Storage> ReadyLine        //就绪队列
+                
+                   方法：
+                        1.Initialize:初始化内存的方法,初始化之后，空内存块有20个Storage，阻塞队列1，
+                                     阻塞队列2，阻塞队列3，就绪队列都是空。
+                        2.display:内存快照，展示内存里面阻塞队列，就绪队列，还有空内存的情况。
+                        3.Apply：申请一块PCB，当内存里面有空的内存块时，可以申请，否则报错。
+                        4.Unique:传入一个int型参数，代表进程号，方法作用是判断这个进程号是否是唯一的。唯一的返回true,否则返回false
+                        5.ChangeToWait:把进程状态从运行态或者就绪态转为等待态。传入一个int型参数来表示等待的原因，根据不同的等待原因把进程放进不同的等
+                                       待队列里面去。
+                     ** 6.Run:运行一个进程。如果一个进程已经运行完成，就回收那一块内存，把这个内存加入EmptyLine。
+                        7. IsEmpty:判断内存中是否所有内存都是空的。
+                     ** 8.RevokeWait:传入两个参数，分别是等待的原因和进程号。如果指定原因的等待队列中有相应的进程号，就把哪个进程唤醒。否则报错。
+                     ** 9.Revoke:当用户退出进程之后，如果内存的等待队列还有等待进程，就系统就自动唤醒等待进程的第一个进程，加入就绪队列。
+
+2.类Storage:
+                    成员：int flag                             //为1表示满，为0表示空
+                          PCB content                          //用来存储PCB的内容
+
+                    方法：
+                         1.FillInPCB：当这个内存块是空的，把内存块取出来使用
+                         2.Run:运行这一块内存保存的进程
+                         3.Recycle:回收这一个内存，在进程运行完成之后被调用
+
+
+3.类PCB：           成员：int ID                               //唯一的进程号
+                          int name                             //进程的名字
+                          String status                        //进程的状态
+
+                    方法：
+                         1.display:展示PCB的内容
+                         3.changeStatus:改变一个PCB的状态
+                         4.addReason:当把一个进程变成阻塞状态时需要给出等待原因
+
+
+4.类Boundary        方法：
+                        1.display:展示交互的界面
+                        2.WaitingReason:当用户决定要让一个系统进入等待队列的时候，显示这个界面提示用户输入等待的原因和等待的进程号
+                        3.InputID:用来提示用户输入进程号
+
+5.类Dynamic         方法：
+                       主函数：实现动态的内存功能
+                               先初始化内存，初始化之后显示内存的情况。
+                               然后选择现在想要进行的操作。
+                               输入-1表示错误，重新显示界面
+                               输入1表示创建一个进程，然后再展示一次内存的情况
+                               输入2表示把就绪队列的进程转移到等待队列，还要进一步选择等待的原因
+                           
