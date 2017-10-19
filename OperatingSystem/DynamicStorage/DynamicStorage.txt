@@ -30,17 +30,17 @@ public class DynamicStorage {
 				internalStorage.display();
 				break;
 			case 2:
-                        case 4:
+            case 4:
 				j = Boundary.WaitingReason();
 				while(j==-1)
 					j = Boundary.WaitingReason();
 				t = Boundary.InputID();
-                                if(tem==2){
-				        tag = internalStorage.ChangeToWait(j, t);
-                                }
-                                else{
-				        tag = internalStorage.RevokeWait(j, t);
-                                }
+                if(tem==2){
+                	tag = internalStorage.ChangeToWait(j, t);
+                }
+                else{
+                	tag = internalStorage.RevokeWait(j, t);
+                }
 				if(tag==false)
 					System.out.println("There is no ID :"+t+"Input the right ID!");	
 				else

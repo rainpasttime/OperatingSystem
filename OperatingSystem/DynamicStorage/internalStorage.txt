@@ -1,13 +1,11 @@
 /*
  * 内存类：
- * 假定整个内存中只有20个单元的内存块。则空内存，阻塞队列1，阻塞队列2，阻塞队列3，就绪队列所有的Storage
- * 加起来的数目是20.
+ * 假定整个内存中只有20个单元的内存块。则空内存，阻塞队列数组，就绪队列所有的Storage加起来的数目是20.
  *     成员：1.空内存
  *         2.阻塞队列数组
  *         3.就绪队列
  *     方法：
- *         1.Initialize:初始化内存的方法,初始化之后，空内存块有20个Storage，阻塞队列1，
- *                      阻塞队列2，阻塞队列3，就绪队列都是空。
+ *         1.Initialize:初始化内存的方法,初始化之后，空内存块有20个Storage，阻塞数组，就绪队列都是空。
  *         2.display:内存快照，展示内存里面阻塞队列，就绪队列，还有空内存的情况。
  *         3.Apply：创建一个进程。申请一块PCB，当内存里面有空的内存块时，可以申请，否则报错。
  *         4.Unique:传入一个int型参数，代表进程号，方法作用是判断这个进程号是否是唯一的。唯一的返回true,否则返回false。
@@ -22,14 +20,15 @@ import java.util.LinkedList;
 import java.util.Scanner;
 public class internalStorage {
 	private static LinkedList<Storage> EmptyLine;
-        private static LinkedList<Strong>[]  WaitingLine = new LinkedList<Strong>[3];
+    private static Waiting  WaitingLine[];
 	private static LinkedList<Storage> ReadyLine;
 	
 	public static void Initialize() {
 		EmptyLine = new LinkedList<Storage>();
-		WaitingLine[0] = new LinkedList<Storage>();
-		WaitingLine[1] = new LinkedList<Storage>();
-		WaitingLine[2] = new LinkedList<Storage>();
+		WaitingLine = new Waiting[3];
+		WaitingLine[0] = new Waiting();
+		WaitingLine[1] = new Waiting();
+		WaitingLine[2] = new Waiting();
 		ReadyLine = new LinkedList<Storage>();
 		for(int i=0;i<20;i++) {
 			Storage tem = new Storage();
@@ -39,21 +38,21 @@ public class internalStorage {
 	public static void display() {
 		System.out.println("===========================================");
 		int i = EmptyLine.size();
-                int j = 0;
+        int j = 0;
 		System.out.println("The number of empty storage is "+i);
 		System.out.println("");
 		
-                while(j<3){
-                        i = WaitingLine[j].size();
+        while(j<3){
+                i = WaitingLine[j].size();
 		        System.out.println("The number of waiting line "+j+"is "+i);
 		        while(i>0) {
 				Storage tem = WaitingLine[j].get(i-1);
 			        tem.display();
 			        i--;
 		        }
-                        j++;
+                j++;
 		        System.out.println("");
-                }
+        }
 		
 		i = ReadyLine.size();
 		System.out.println("The number of ready line is "+i);
@@ -82,16 +81,16 @@ public class internalStorage {
 				
 				System.out.println("Input the ID of PCB:");
 				try {
-					j = read.nextInt();
+					    j = read.nextInt();
 				        judge = Unique(j);
 				        if(!judge){
 				    	     System.out.println("Fail!The ID of PCB is no unique!Input again!");
-					continue;
+					         continue;
 				        }
 				    }
 			         catch(Exception e) {
-					System.out.println("Please input number!Input again");
-					continue;
+			        	 System.out.println("Please input number!Input again");
+					     continue;
 				 }
 				
 				System.out.println("Input the running time of PCB:");
@@ -111,20 +110,22 @@ public class internalStorage {
 		}
 	}
 	public static boolean Unique(int i) {
-                int row = 0;
-                while(row++<3){
-			int number = WaitingLine[row].size();
-			if(number!=0) {
-				Iterator<Storage> iter = WaitingLine[row].iterator();
-				while(iter.hasNext()) {
-					Storage temone = iter.next();
-					PCB temtwo  = temone.getContent();
-			 	        int j = temtwo.getID();
-			   	        if(i==j)
-			    		return false;
-				}
-			}
-		}
+            int row = 0;
+            int number;
+            while(row<3){
+            	number = WaitingLine[row].size();
+			    if(number!=0) {
+			    	while(number>0) {
+			    		Storage temone =WaitingLine[row].get(number-1);
+			    		PCB temtwo  = temone.getContent();
+			 	        int t = temtwo.getID();
+			 	        if(i==t)
+			 	        	return false;
+			 	        number--;
+				    }
+			    }
+			    row++;
+		    }
 		
 		number = ReadyLine.size();
 		if(number!=0) {
@@ -155,11 +156,11 @@ public class internalStorage {
 				flag = 0;
 				ReadyLine.remove(i);
 				temone.changeStatus("Waiting");
-                                if(reason==0)
+                if(reason==0)
 					temone.addReason("Waiting for Input");
-                                else if(reason==1)
+                else if(reason==1)
 					temone.addReason("Waiting for printer");
-                                else if(reason==2)
+                else if(reason==2)
 					temone.addReason("Waiting for another process");
 				WaitingLine[reason].add(temone);
 				return true;
@@ -170,9 +171,9 @@ public class internalStorage {
 					temone = ReadyLine.get(i);
 					temtwo = temone.getContent();
 					tem = temtwo.getID();
-                                }
+                }
 				else
-				        break;
+				    break;
 			}
 		}
 		return false;
@@ -189,19 +190,19 @@ public class internalStorage {
 		    	ReadyLine.addLast(one);
 		    }
 		}
-        }
+    }
 	public static boolean IsEmpty() {
 		int i = ReadyLine.size();
 		if(i==0){
-                         int j = 0;
-                         while(j<3){
-                                   i = WaitingLine[j].size();
-                                   j++;
-                                   if(i!=0)
-                                          return false;
-                         }
-                         return true;
-                }
+			int j = 0;
+            while(j<3){
+                      i = WaitingLine[j].size();
+                      j++;
+                      if(i!=0)
+                    	  return false;
+            }
+            return true;
+        }
 		else
 			return false;
 	}
@@ -212,7 +213,7 @@ public class internalStorage {
 		int tem;
 		int flag = 1;
   
-            	temone = WaitingLine[reason].get(i);
+        temone = WaitingLine[reason].get(i);
 		temtwo = temone.getContent();
 		tem = temtwo.getID();
 		while(flag==1) {
@@ -231,22 +232,22 @@ public class internalStorage {
 					tem = temtwo.getID();
 				}
 				else
-				        break;
+				    break;
 			}
 		}
 		return false;
 	}
 	public static void Revoke() {
 		int i = 0;
-                int j= 0;
+        int j= 0;
 		while(i<3) {
-                        j = WaitingLine[i].size();
-                        if(j>0){
-			      Storage one = WaitingLine[i].removeFirst();
-			      one.changeStatus("Ready");
-			      ReadyLine.add(one);
-		        }
-                        i++;
-                }
+			j = WaitingLine[i].size();
+            if(j>0){
+            	Storage one = WaitingLine[i].removeFirst();
+			    one.changeStatus("Ready");
+			    ReadyLine.add(one);
+		    }
+            i++;
+		}
 	}
 }

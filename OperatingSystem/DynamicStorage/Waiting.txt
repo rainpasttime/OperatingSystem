@@ -1,0 +1,32 @@
+/*
+ * 阻塞队列类
+ *        成员：等待队列链表
+ *        方法：
+ *           1.size：获得等待队列的长度
+ *           2.get：获得第i个元素
+ *           3.add：增加一个元素
+ *           4.remove：移除第i个元素
+ *           5.removeFirst：移除第一个元素
+ */
+import java.util.LinkedList;
+public class Waiting {
+    private  LinkedList<Storage>  WaitingLine;
+    public Waiting() {
+		WaitingLine = new LinkedList<Storage>();
+    }
+    public int size() {
+    	return WaitingLine.size();
+    }
+    public Storage get(int i) {
+    	return WaitingLine.get(i);
+    }
+    public void add(Storage one) {
+    	WaitingLine.add(one);
+    }
+    public Storage remove(int i) {
+    	return WaitingLine.remove(i);
+    }
+    public Storage removeFirst() {
+    	return WaitingLine.removeFirst();
+    }
+}

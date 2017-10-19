@@ -1,9 +1,17 @@
 /*
 根据三状态模型的进程，创建，等待，就绪。
+
 就绪到运行的过程由internalStorage类的Run方法完成。（运行时总是运行就绪队列的第一个进程）
+
 运行到就绪的过程由internalStorage类的Run方法完成。（时间片到了的进程加入到就绪队列的队尾）
+
 等待到就绪的过程由internalStorage类的RevokeWait方法和Revoke方法完成。
+
 就绪到等待的过程由internalStorage类的ChangeToWait方法完成。
+
+当进程运行完之后，回收内存的过程由Storage.Recycle方法完成。
+
+当用户输入0退出之后，如果等待队列和就绪队列不空，那么系统会按顺序把等待中的进程唤醒，把就绪队列中的进程运行。
 
 */
 

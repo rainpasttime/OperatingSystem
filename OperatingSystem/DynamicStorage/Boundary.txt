@@ -24,7 +24,7 @@ public class Boundary {
 	}
 	
 	public static int WaitingReason() {
-		int i = 0;
+		int i = -1;
 		System.out.println("===========================================");
 		System.out.println("0:Wating for input  1:Waiting for printer  2:Waiting for another process");
 		Scanner read = new Scanner(System.in);
@@ -35,7 +35,7 @@ public class Boundary {
 			System.out.println("Input number!Input again!");
 			return -1;
 		}
-		if(i<0||i>3) {
+		if(i<0||i>2) {
 			System.out.println("Wrong!input the number in list!");
 			return -1;
 		}
