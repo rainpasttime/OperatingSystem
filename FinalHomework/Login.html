@@ -29,6 +29,10 @@
             background-color: white !important;
             font-size:20px;
         }
+        input
+        {
+            width: 200px !important;
+        }
     </style>
 </head>
 <body>
@@ -87,7 +91,7 @@
 </head>
 <body>
 <!------------注册表单的内容-------------->
-<div class="jumbotron">
+<!--<div class="jumbotron">
     <div class="container">
         <form name="Must" action="tem.txt" onsubmit="return JudgeLegal()" method="get">
             *学号&nbsp<input name="MustA" type="text">
@@ -95,6 +99,39 @@
             *密码&nbsp<input name="MustC" type="text">
             <br/>
             <input type="submit" value="登录">
+        </form>
+    </div>
+</div>-->
+
+<div class="jumbotron">
+    <div class="container">
+        <form class="form-horizontal" role="form">
+            <div class="form-group">
+                <label class="col-md-2 control-label">学号</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="firstname" placeholder="请输入学号">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label">密码</label>
+                <div class="col-md-10">
+                    <input type="text" class="form-control" id="lastname" placeholder="请输入密码">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> 请记住我
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" class="btn btn-default">登录</button>
+                </div>
+            </div>
         </form>
     </div>
 </div>

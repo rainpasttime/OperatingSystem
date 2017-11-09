@@ -89,14 +89,17 @@
 <!------------注册表单的内容-------------->
 <div class="jumbotron">
     <div class="container">
-        <form name="Must" action="tem.txt" onsubmit="return JudgeLegal()" method="get">
-            *学号&nbsp<input name="MustA" type="text">
+        <form class="form-horizontal" name="Must" role="form" action="tem.txt" onsubmit="return JudgeLegal()" method="get">
+            <div class="form-group">
+                *学号&nbsp<input name="MustA" type="text" class="form-control" placeholder="请输入名字" width="30px">
+            </div>
             <br/>
-            *邮箱&nbsp<input name="MustB" type="text">
+            *邮箱&nbsp<input name="MustB" type="text" class="form-control">
             <br/>
-            *密码&nbsp<input name="MustC" type="text">
+            *密码&nbsp<span id="box"><input name="MustC" type="password" class="form-control"></span>
+            <span id="click"><a href="javascript:showps()">显示密码</a></span>
             <br/>
-            *学院&nbsp<input name="MustD" type="text">
+            *学院&nbsp<input name="MustD" type="text" class="form-control">
             <br/>
             <input type="submit" value="提交">
         </form>

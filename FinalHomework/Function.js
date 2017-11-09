@@ -29,3 +29,19 @@ function JudgeLegal()
         return false;
     }
 }
+
+function showps()
+{
+    if (this.forms.MustC.type="password") {
+        document.getElementById("box").innerHTML="<input type=\"text\" name=\"MustC\" value="+this.forms.password.value+">";
+        document.getElementById("click").innerHTML="<a href=\"javascript:hideps()\">隐藏密码</a>"
+    }
+}
+function hideps(){
+    if (this.forms.MustC.type="text") {
+        document.getElementById("box").innerHTML="<input type=\"password\" name=\"MustC\" value="+this.forms.password.value+">";
+        document.getElementById("click").innerHTML="<a href=\"javascript:showps()\">显示密码</a>"
+    }
+}
+
+
